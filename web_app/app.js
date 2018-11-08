@@ -5,7 +5,8 @@ var currentTableName;
 var SPFileName;
 var downloadFilePath1;
 var downloadFilePath2;
-var FilePath3;
+var File_rootPath;
+var File_Path;
 var tableLanguage = {
   "sProcessing": "处理中...",
   "sLengthMenu": "显示 _MENU_ 项结果",
@@ -60,7 +61,7 @@ $(document).ready(function () {
     $("#dbwindow").hide();
     $("#spwindow").hide();
     $("#fmwindow").show();
-    if (FilePath3 == null) {
+    if (File_rootPath == null) {
       getFileList();
     }
   });
@@ -476,7 +477,6 @@ function inflateDataFromDb2(result) {
       var addRowDataArray = JSON.parse(addRowData);
       var data = columnHeader;
       for (var i = 0; i < data.length; i++) {
-        console.info(addRowDataArray[i])
         data[i].value = addRowDataArray[i].value;
         data[i].dataType = addRowDataArray[i].dataType;
       }
@@ -513,14 +513,13 @@ function queryFunction() {
 
 function downloadFile(path) {
   if (isDatabaseSelected) {
-//		$.ajax({
-//			url: "downloadFile?downloadFile="+path, success: function () {
-    window.location = "downloadFile?downloadFile=" + path;
-//			}
-//		});
+    if (path.indexOf("/") != -1) {
+      window.location = "downloadFile" + path + "?downloadFile=" + path;
+    } else {
+      window.location = "downloadFile/" + path + "?downloadFile=" + path;
+    }
   }
 }
-
 
 function getDBList() {
   $.ajax({
@@ -596,12 +595,10 @@ function getFileList(path) {
     success:
       function (result) {
         if (result.code == 200) {
+          File_rootPath = result.fileList.parentPath;
+          File_Path = result.fileList.path;
           FilecolumnData = result.fileList.fileList;
           for (i = 0; i < FilecolumnData.length; i++) {
-            if (i == 0) {
-              FilePath3 = FilecolumnData[0].rootPath;
-              console.info("getFileList",FilePath3);
-            }
             if (FilecolumnData[i].dir == true) {
               FilecolumnData[i].fileName = "<div onClick='getFileList(\"" + FilecolumnData[i].path + "\")'> <img src=\"images/folder.png\"/> <a>" + FilecolumnData[i].fileName + "</a></div>";
             } else {
@@ -626,7 +623,7 @@ function getFileList(path) {
                 {
                   text: '返回上级目录',
                   action: function (e, dt, node, config) {
-                    getFileList(FilePath3);
+                    getFileList(File_rootPath);
                   }
                 },
                 {
@@ -649,10 +646,6 @@ function getFileList(path) {
   });
 }
 
-function selectUploadFile() {
-  document.getElementById("uploadFileBtn").click();
-}
-
 function uploadFile() {
 
   var files = document.getElementById("uploadFileBtn").files;
@@ -660,26 +653,36 @@ function uploadFile() {
     alert("请选择图片");
     return;
   }
-    // var formFile = new FormData(document.getElementById("uploadFileBtn"));
-    var formFile = new FormData();
-    formFile.append(files[0].name, files[0]); //加入文件对象
-  console.info(files);
-    $.ajax({
-      url: rootUrlWithUrlParam+"&uploadPath="+FilePath3,
-      data: formFile,
-      type: "POST",
-      cache: false,//上传文件无需缓存
-      processData: false,//用于对data参数进行序列化处理 这里必须false
-      contentType: false, //必须
-      success: function (result) {
-        alert("上传完成!");
-        console.info(FilePath3);
-        getFileList(FilePath3);
-      },
-      error:function(xhr,state,errorThrown){
-        alert("上传失败!"+errorThrown);
-      }
-    })
+  // var formFile = new FormData(document.getElementById("uploadFileBtn"));
+  var formFile = new FormData();
+  formFile.append(files[0].name, files[0]); //加入文件对象
+  var filedir;
+  if (typeof(File_Path) == "undefined") {
+    filedir = "";
+  } else {
+    filedir = File_Path;
+  }
+  var url;
+  if (rootUrlWithUrlParam.indexOf('?') == -1) {
+    url = rootUrlWithUrlParam + "/upload?uploadPath=" + filedir + "&random=" + Math.random();
+  } else {
+    url = rootUrlWithUrlParam + "&uploadPath=" + filedir + "&random=" + Math.random();
+  }
+  $.ajax({
+    url: url,
+    data: formFile,
+    type: "POST",
+    cache: false,//上传文件无需缓存
+    processData: false,//用于对data参数进行序列化处理 这里必须false
+    contentType: false, //必须
+    success: function (result) {
+      alert("上传完成!");
+      getFileList(File_Path);
+    },
+    error: function (xhr, state, errorThrown) {
+      alert("上传失败!" + errorThrown);
+    }
+  })
 }
 
 function file_delete(position, path) {
