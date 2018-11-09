@@ -37,7 +37,7 @@
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="https://github.com/hnsugar" style="color: #f7f7f7;" target="_blank">Github</a></li>
+                    <li><a href="https://github.com/itgowo" style="color: #f7f7f7;" target="_blank">Github</a></li>
                     <li><a href="http://itgowo.com" style="color: #f7f7f7;" target="_blank">IT狗窝</a></li>
                     <!--<li><a href="http://blog.csdn.net/hnsugar" style="color: #f7f7f7;" target="_blank">CSDN</a></li>-->
                 </ul>
@@ -64,18 +64,7 @@
     <div id="dbwindow" class="container ">
         <div class="content">
             <div class="container padding-five">
-                <div class="row padding-five">
-                    <div class="col-sm-12">
-                        <div class="form-group">
-                            <label for="query">查询</label>
-                            <input class="form-control" id="query">
-                        </div>
-                        <button id="selected-db-info" type="button" class="btn btn-info"> 欢迎使用\(^o^)/~</button>
-                        <button id="run-query" type="submit" onclick="queryFunction()"
-                                class="btn btn-primary pull-right disabled">执行SQL
-                        </button>
-                    </div>
-                </div>
+
                 <div class="row padding-ten">
                     <div class="col-sm-2">
                         <div class="panel panel-info">
@@ -129,6 +118,29 @@
     </div>
 </div>
 <input style="visibility:hidden" type="file" onchange="uploadFile()" id="uploadFileBtn">
+<div id="sys-loading" class="">
+    <div class="spinner">
+        <div class="loader-inner line-scale-pulse-out-rapid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<div class="row padding-five">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label for="query">查询</label>
+            <input class="form-control" id="query">
+        </div>
+        <button id="selected-db-info" type="button" class="btn btn-info"> 欢迎使用\(^o^)/~</button>
+        <button id="run-query" type="submit" onclick="queryFunction()"
+                class="btn btn-primary pull-right disabled">执行SQL
+        </button>
+    </div>
+</div>
 </body>
 <script src="app.js"></script>
 </html>

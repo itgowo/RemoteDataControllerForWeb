@@ -7,6 +7,7 @@ var downloadFilePath1;
 var downloadFilePath2;
 var File_rootPath;
 var File_Path;
+var dirType;
 var tableLanguage = {
   "sProcessing": "处理中...",
   "sLengthMenu": "显示 _MENU_ 项结果",
@@ -31,7 +32,15 @@ var tableLanguage = {
     "sSortDescending": ": 以降序排列此列"
   }
 };
-
+$( document ).ajaxComplete(function( event, xhr, settings ) {
+    hideLoading();
+});
+$(document).ajaxError(function(event,xhr,options,exc){
+  hideLoading();
+});
+$(document).ajaxSend(function(event,xhr,options,exc){
+  showLoading();
+});
 $(document).ready(function () {
   dialog();
   getDBList();
@@ -99,6 +108,7 @@ $(document).ready(function () {
     });
     $(this).addClass('selected');
   });
+  hideLoading();
 });
 
 var isDatabaseSelected = true;
@@ -302,6 +312,7 @@ function inflateDataFromDb(result) {
     // hack to fix alignment issue when scrollX is enabled
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
     $(".table ").css({"width": "100%"});
+    showSuccessInfo(result.msg);
   } else {
     showErrorInfo(result.msg);
   }
@@ -390,9 +401,8 @@ function inflateDataFromSp(result) {
     // hack to fix alignment issue when scrollX is enabled
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
     $(".table ").css({"width": "100%"});
-  }
-
-  else {
+    showSuccessInfo(result.msg);
+  } else {
     showErrorInfo(result.msg);
   }
 
@@ -587,9 +597,10 @@ function getFileList(path) {
     type: "POST",
     url: rootUrlWithUrlParam,
     crossDomain: true,
-    data: JSON.stringify(path == null ? {action: "getFileList"} : {
+    data: JSON.stringify({
       action: "getFileList",
-      "data": path
+      "data": path,
+      "data1": dirType
     }),
     contentType: "application/json; charset=utf-8",
     dataType: "json",
@@ -607,8 +618,6 @@ function getFileList(path) {
             }
             FilecolumnData[i].action = "<div><button  onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button></div><div><button  onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button></div>";
           }
-
-
           if ($.fn.DataTable.isDataTable(tableId)) {
             $(tableId).DataTable().destroy();
           }
@@ -638,14 +647,24 @@ function getFileList(path) {
                   action: function (e, dt, node, config) {
                     makeDir();
                   }
+                },
+                {
+                  text: '切换到内部目录',
+                  action: function (e, dt, node, config) {
+                    dirType = null;
+                    getFileList();
+                  }
+                },
+                {
+                  text: '切换到扩展存储',
+                  action: function (e, dt, node, config) {
+                    dirType = "切换到扩展存储";
+                    getFileList();
+                  }
                 }
               ]
             }
           );
-          // table.on('click', 'tr', function () {
-          //     var data = table.row(this).data();
-          //     alert('You clicked on ' + data.fileName + '\'s row');
-          // });
         } else {
           showErrorInfo(result.msg);
         }
@@ -993,6 +1012,7 @@ function sp_addData(updatedData, callback) {
 }
 
 function showSuccessInfo(message) {
+  hideLoading();
   var snackbarId = "snackbar";
   var snackbarElement = $("#" + snackbarId);
   snackbarElement.addClass("show");
@@ -1004,6 +1024,7 @@ function showSuccessInfo(message) {
 }
 
 function showErrorInfo(message) {
+  hideLoading();
   var snackbarId = "snackbar";
   var snackbarElement = $("#" + snackbarId);
   snackbarElement.addClass("show");
@@ -1013,4 +1034,12 @@ function showErrorInfo(message) {
   setTimeout(function () {
     snackbarElement.removeClass("show");
   }, 3000);
+}
+
+function showLoading() {
+  $("#sys-loading").show();
+}
+
+function hideLoading() {
+  $("#sys-loading").hide();
 }
