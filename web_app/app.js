@@ -401,6 +401,7 @@ function inflateDataFromSp(result) {
 // 从数据库拿数据局，不分页
 function inflateDataFromDb2(result) {
   if (result.code == 200) {
+    showSuccessInfo(result.msg);
     var columnHeader = result.tableData.tableColumns;
     var columnData = result.tableData.tableDatas;
     for (var i = 0; i < columnHeader.length; i++) {
@@ -604,7 +605,7 @@ function getFileList(path) {
             } else {
               FilecolumnData[i].fileName = "<div  onClick='downloadFile(\"" + FilecolumnData[i].path + "\")'> <img src=\"images/file.png\"/><a>" + FilecolumnData[i].fileName + "</a></div>";
             }
-            FilecolumnData[i].delete = "<div><button  onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button></div>";
+            FilecolumnData[i].action = "<div><button  onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button></div><div><button  onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button></div>";
           }
 
 
@@ -633,7 +634,7 @@ function getFileList(path) {
                   }
                 },
                 {
-                  text: '创建文件夹',
+                  text: '新建文件夹',
                   action: function (e, dt, node, config) {
                     makeDir();
                   }
@@ -652,8 +653,43 @@ function getFileList(path) {
   });
 }
 
+function file_rename(position, path) {
+  var str = prompt("新的文件名，不要添加路径哦！");
+  if (str == null) {
+    return;
+  }
+  if (str) {
+    $.ajax({
+      type: "POST",
+      url: rootUrlWithUrlParam,
+      crossDomain: true,
+      data: JSON.stringify({
+        action: "renameFile",
+        "data": path,
+        "data1": str
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success:
+        function (result) {
+          if (result.code == 200) {
+            getFileList(File_Path);
+            showSuccessInfo(result.msg);
+          } else {
+            showErrorInfo(result.msg);
+          }
+        }
+    });
+  } else {
+    alert("新名字错误")
+  }
+}
+
 function makeDir() {
   var str = prompt("文件夹名");
+  if (str == null) {
+    return;
+  }
   if (str) {
     $.ajax({
       type: "POST",
@@ -661,7 +697,7 @@ function makeDir() {
       crossDomain: true,
       data: JSON.stringify({
         action: "makeDir",
-        "data": File_Path+"/"+str
+        "data": File_Path + "/" + str
       }),
       contentType: "application/json; charset=utf-8",
       dataType: "json",
@@ -711,7 +747,6 @@ function uploadFile() {
     processData: false,//用于对data参数进行序列化处理 这里必须false
     contentType: false, //必须
     success: function (result) {
-      console.info(result,result.code,result.msg);
       if (result.code == 200) {
         alert("上传完成!");
       } else {
