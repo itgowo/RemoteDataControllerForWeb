@@ -50,16 +50,19 @@ $(document).ready(function () {
     }
   });
   $("#dbwindow").show();
+  $("#sqlCommand").show();
   $("#spwindow").hide();
   $("#fmwindow").hide();
 
   $("#btndb").click(function () {
     $("#dbwindow").show();
+    $("#sqlCommand").show();
     $("#spwindow").hide();
     $("#fmwindow").hide();
   });
   $("#btnsp").click(function () {
     $("#dbwindow").hide();
+    $("#sqlCommand").hide();
     $("#spwindow").show();
     $("#fmwindow").hide();
     if (downloadFilePath2 == null) {
@@ -68,6 +71,7 @@ $(document).ready(function () {
   });
   $("#btnfm").click(function () {
     $("#dbwindow").hide();
+    $("#sqlCommand").hide();
     $("#spwindow").hide();
     $("#fmwindow").show();
     if (File_rootPath == null) {
