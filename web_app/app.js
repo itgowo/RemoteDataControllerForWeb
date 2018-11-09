@@ -631,6 +631,12 @@ function getFileList(path) {
                   action: function (e, dt, node, config) {
                     document.getElementById("uploadFileBtn").click();
                   }
+                },
+                {
+                  text: '创建文件夹',
+                  action: function (e, dt, node, config) {
+                    makeDir();
+                  }
                 }
               ]
             }
@@ -644,6 +650,34 @@ function getFileList(path) {
         }
       }
   });
+}
+
+function makeDir() {
+  var str = prompt("文件夹名");
+  if (str) {
+    $.ajax({
+      type: "POST",
+      url: rootUrlWithUrlParam,
+      crossDomain: true,
+      data: JSON.stringify({
+        action: "makeDir",
+        "data": File_Path+"/"+str
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success:
+        function (result) {
+          if (result.code == 200) {
+            getFileList(File_Path);
+            showSuccessInfo(result.msg);
+          } else {
+            showErrorInfo(result.msg);
+          }
+        }
+    });
+  } else {
+    alert("名称非法")
+  }
 }
 
 function uploadFile() {
@@ -668,6 +702,7 @@ function uploadFile() {
   } else {
     url = rootUrlWithUrlParam + "&uploadPath=" + filedir + "&random=" + Math.random();
   }
+  document.getElementById("uploadFileBtn").value = '';
   $.ajax({
     url: url,
     data: formFile,
@@ -676,7 +711,12 @@ function uploadFile() {
     processData: false,//用于对data参数进行序列化处理 这里必须false
     contentType: false, //必须
     success: function (result) {
-      alert("上传完成!");
+      console.info(result,result.code,result.msg);
+      if (result.code == 200) {
+        alert("上传完成!");
+      } else {
+        alert(result.msg);
+      }
       getFileList(File_Path);
     },
     error: function (xhr, state, errorThrown) {
