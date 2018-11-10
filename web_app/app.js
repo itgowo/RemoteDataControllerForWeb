@@ -32,13 +32,13 @@ var tableLanguage = {
     "sSortDescending": ": 以降序排列此列"
   }
 };
-$( document ).ajaxComplete(function( event, xhr, settings ) {
-    hideLoading();
-});
-$(document).ajaxError(function(event,xhr,options,exc){
+$(document).ajaxComplete(function (event, xhr, settings) {
   hideLoading();
 });
-$(document).ajaxSend(function(event,xhr,options,exc){
+$(document).ajaxError(function (event, xhr, options, exc) {
+  hideLoading();
+});
+$(document).ajaxSend(function (event, xhr, options, exc) {
   showLoading();
 });
 $(document).ready(function () {
@@ -620,7 +620,7 @@ function getFileList(path) {
             } else {
               FilecolumnData[i].fileName = "<div  onClick='downloadFile(\"" + FilecolumnData[i].path + "\")'> <img src=\"images/file.png\"/><a>" + FilecolumnData[i].fileName + "</a></div>";
             }
-            FilecolumnData[i].action = "<div><button  onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button></div><div><button  onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button></div>";
+            FilecolumnData[i].action = "<div><button class='btn btn-default' onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button><button class='btn btn-default' style='margin-left: 10px' onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button></div>";
           }
           if ($.fn.DataTable.isDataTable(tableId)) {
             $(tableId).DataTable().destroy();
@@ -636,24 +636,28 @@ function getFileList(path) {
               buttons: [
                 {
                   text: '返回上级目录',
+                  className: 'btn-default',
                   action: function (e, dt, node, config) {
                     getFileList(File_rootPath);
                   }
                 },
                 {
                   text: '上传文件',
+                  className: 'btn-default',
                   action: function (e, dt, node, config) {
                     document.getElementById("uploadFileBtn").click();
                   }
                 },
                 {
                   text: '新建文件夹',
+                  className: 'btn-default',
                   action: function (e, dt, node, config) {
                     makeDir();
                   }
                 },
                 {
                   text: '切换到内部目录',
+                  className: 'btn-default',
                   action: function (e, dt, node, config) {
                     dirType = null;
                     getFileList();
@@ -661,6 +665,7 @@ function getFileList(path) {
                 },
                 {
                   text: '切换到扩展存储',
+                  className: 'btn-default',
                   action: function (e, dt, node, config) {
                     dirType = "切换到扩展存储";
                     getFileList();
