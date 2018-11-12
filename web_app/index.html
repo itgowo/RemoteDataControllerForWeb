@@ -28,28 +28,27 @@
     <link rel="shortcut icon" href="images/favicon.ico">
 </head>
 <body>
-<div style="min-height: 70%;padding-bottom: 80px">
-    <div id="app"><img src="images/bg.jpg" alt="" id="background"/>
-        <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="background-color: #333 !important">
-            <div class="container">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header"><a class="navbar-brand" href="index.html" style="color: #f7f7f7;">Remote&nbspData&nbspController</a>
-                </div>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="https://github.com/itgowo" style="color: #f7f7f7;" target="_blank">Github</a></li>
-                        <li><a href="http://itgowo.com" style="color: #f7f7f7;" target="_blank">IT狗窝</a></li>
-                        <!--<li><a href="http://blog.csdn.net/hnsugar" style="color: #f7f7f7;" target="_blank">CSDN</a></li>-->
-                    </ul>
-                </div>
-                <!-- /.navbar-collapse -->
+<div id="app"><img src="images/bg.jpg" alt="" id="background"/>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation"
+         style="background-color: #333 !important">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header"><a class="navbar-brand"
+                                          style="color: #f7f7f7;">Remote&nbspData&nbspController</a>
             </div>
-            <!-- /.container -->
-        </nav>
-    </div>
-    <!-- Main header 覆盖原有属性-->
-    <div style="margin-top:100px;width:90%;margin-left:auto;margin-right:auto;left:10%;right:10%">
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="https://github.com/itgowo" style="color: #f7f7f7;" target="_blank">Github</a>
+                    </li>
+                    <li><a href="http://itgowo.com" style="color: #f7f7f7;" target="_blank">IT狗窝</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div id="rdc_layout" style="min-height: 70%;padding-bottom: 80px" hidden>
+    <div style="margin-top:100px;width:90%;margin-left:auto;margin-right:auto;left:10%;right:10%;">
         <div class="btn-group btn-group-justified" role="group" aria-label="..."
              style="padding:10px;margin-right:auto;margin-left:auto">
             <div class="btn-group" role="group">
@@ -119,28 +118,49 @@
         </div>
     </div>
     <input style="visibility:hidden" type="file" onchange="uploadFile()" id="uploadFileBtn">
-    <div id="sys-loading" class="">
-        <div class="spinner">
-            <div class="loader-inner line-scale-pulse-out-rapid">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+    <div id="sqlCommand" class="navbar-fixed-bottom" style="padding-left: 30px;padding-right: 30px;visibility: hidden">
+        <div class="col-sm-12">
+            <button id="run-query" type="submit" onclick="queryFunction()" class="btn btn-primary pull-right disabled">
+                执行SQL
+            </button>
+            <div class="form-group" style="margin-top: 20px">
+                <label for="query">数据库控制台</label>
+                <input class="form-control" id="query">
             </div>
         </div>
     </div>
 </div>
-<div id="sqlCommand" class="navbar-fixed-bottom" style="padding-left: 30px;padding-right: 30px">
-    <div class="col-sm-12">
-        <button id="run-query" type="submit" onclick="queryFunction()" class="btn btn-primary pull-right disabled">
-            执行SQL
-        </button>
-        <div class="form-group" style="margin-top: 20px">
-            <label for="query">数据库控制台</label>
-            <input class="form-control" id="query">
+<div id="rdc_login"><h1>欢迎使用远程数据控制服务</h1>
+    <div class="login-form">
+        <form>
+            <input id="ClientId" type="text" class="text" value="设备ID"
+                   onfocus="if (this.value == '设备ID'){this.value = ''}"
+                   onblur="if (this.value == '') {this.value = '设备ID';}">
+            <div class="key">
+                <input id="ClientToken" type="text2" value="设备验证码"
+                       onfocus="if (this.value == '设备验证码'){this.value = ''}"
+                       onblur="if (this.value == '') {this.value = '设备验证码';}">
+            </div>
+        </form>
+        <div class="signin">
+            <input type="submit" value="登录" onclick="login()">
         </div>
     </div>
+</div>
+<div class="copy-rights">
+    <p style="color: #0c0c0c">Copyright &copy; 2018.itgowo(lujianchao) All rights reserved.</p>
+</div>
+<div id="sys-loading" class="">
+    <div class="spinner">
+        <div class="loader-inner line-scale-pulse-out-rapid">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
 </div>
 </body>
 <script src="app.js"></script>

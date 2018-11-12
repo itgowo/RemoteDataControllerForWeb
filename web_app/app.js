@@ -42,7 +42,66 @@ $(document).ajaxSend(function (event, xhr, options, exc) {
   showLoading();
 });
 $(document).ready(function () {
-  dialog();
+  $.ajax({
+    type: "POST",
+    crossDomain: true,
+    url: rootUrl,
+    data: JSON.stringify({
+      action: "isRemoteServer",
+    }),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function (result) {
+      if (result.code == 200) {
+        if (result.data == 'false') {
+          $('#rdc_login').hide();
+          $('#rdc_layout').show();
+          initRDC();
+        } else {
+          $('#rdc_login').show();
+        }
+      }
+    }
+  });
+})
+
+function login() {
+  var clientId = $('#ClientId').val();
+  var clientToken = $('#ClientToken').val();
+  if (clientId != "设备ID" & clientToken != "设备验证码") {
+    rootUrlWithUrlParam = rootUrl + "/Web?ClientId=" + clientId;
+  } else {
+    alert("信息不能为空");
+    return;
+  }
+  var json = {
+    action: "Auth",
+    clientId: clientId,
+    data: clientToken
+  };
+  $.ajax({
+    url: rootUrlWithUrlParam,
+    type: "POST",
+    data: JSON.stringify(json),
+    contentType: "application/json",  //缺失会出现URL编码，无法转成json对象
+    success: function (result) {
+      console.info(result);
+      if (result != null) {
+        if (result.code == 200) {
+          $('#rdc_login').hide();
+          $('#rdc_layout').show();
+          initRDC();
+        } else {
+          alert("验证失败:" + result.msg)
+        }
+      } else {
+        alert("验证失败:未返回数据");
+      }
+    }
+  });
+}
+
+function initRDC() {
   getDBList();
   $("#query").keypress(function (e) {
     if (e.which == 13) {
@@ -113,33 +172,9 @@ $(document).ready(function () {
     $(this).addClass('selected');
   });
   hideLoading();
-});
+};
 
 var isDatabaseSelected = true;
-
-function getUrlParam(name) {
-  //构造一个含有目标参数的正则表达式对象
-  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-  //匹配目标参数
-  var r = window.location.search.substr(1).match(reg);
-  //返回参数值
-  if (r != null) return unescape(r[2]);
-  return null;
-}
-
-function dialog() {
-  var t = getUrlParam('targetUrl');
-  var c = getUrlParam('ClientId');
-  if (c) {
-    var str = prompt("请输入远程调用地址，服务器代理部署地址，默认为跳转携带服务地址，注意请求数据间隔100毫秒，连续请求会降低速度！", t == null ? "http://localhost:16672" : t);
-    if (str) {
-      rootUrl = str;
-      rootUrlWithUrlParam = rootUrl + "/Web?ClientId=" + c;
-    } else {
-      alert("您刚输入网址错误：" + str)
-    }
-  }
-}
 
 function getData(fileName, tableNameOrPath, isDB) {
   if (isDB == "true") {
