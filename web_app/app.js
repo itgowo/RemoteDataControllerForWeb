@@ -174,8 +174,6 @@ function initRDC() {
   hideLoading();
 };
 
-var isDatabaseSelected = true;
-
 function getData(fileName, tableNameOrPath, isDB) {
   if (isDB == "true") {
     getDataFromDb(fileName, tableNameOrPath);
@@ -562,12 +560,10 @@ function queryFunction() {
 }
 
 function downloadFile(path) {
-  if (isDatabaseSelected) {
-    if (path.indexOf("/") != -1) {
-      window.location = "downloadFile" + path + "?downloadFile=" + path;
-    } else {
-      window.location = "downloadFile/" + path + "?downloadFile=" + path;
-    }
+  if (rootUrlWithUrlParam.indexOf("?")!=-1){
+    window.location = rootUrlWithUrlParam + "&downloadFile=" + path;
+  }else {
+    window.location = rootUrlWithUrlParam + "?downloadFile=" + path;
   }
 }
 
