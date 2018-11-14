@@ -33,8 +33,8 @@
          style="background-color: #333 !important">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header"><a class="navbar-brand"
-                                          style="color: #f7f7f7;">Remote&nbspData&nbspController</a>
+            <div id="reload" class="navbar-header">
+                <a class="navbar-brand" style="color: #f7f7f7">Remote&nbspData&nbspController</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -117,8 +117,7 @@
             <div id="parent-data-divfm" class="col-sm-0"></div>
         </div>
     </div>
-    <input style="visibility:hidden" type="file" onchange="uploadFile()" id="uploadFileBtn">
-    <div id="sqlCommand" class="navbar-fixed-bottom" style="padding-left: 30px;padding-right: 30px;visibility: hidden">
+    <div id="sqlCommand" class="navbar-fixed-bottom" style="padding-left: 30px;padding-right: 30px;display: none">
         <div class="col-sm-12">
             <button id="run-query" type="submit" onclick="queryFunction()" class="btn btn-primary pull-right disabled">
                 执行SQL
@@ -139,7 +138,7 @@
             <div class="key">
                 <input id="ClientToken" type="text2" value="设备验证码"
                        onfocus="if (this.value == '设备验证码'){this.value = ''}"
-                       onblur="if (this.value == '') {this.value = '设备验证码';}">
+                       onblur="if (this.value == '') {this.value = '设备验证码';}" on>
             </div>
         </form>
         <div class="signin">
@@ -162,6 +161,7 @@
     </div>
 </div>
 </div>
+<input style="visibility:hidden" type="file" onchange="uploadFile()" id="uploadFileBtn">
 </body>
 <script src="app.js"></script>
 </html>

@@ -42,6 +42,11 @@ $(document).ajaxSend(function (event, xhr, options, exc) {
   showLoading();
 });
 $(document).ready(function () {
+  $("#ClientToken").keydown(function (e) {
+    if (e.keyCode == 13) {
+      login();
+    }
+  });
   $.ajax({
     type: "POST",
     crossDomain: true,
@@ -85,7 +90,6 @@ function login() {
     data: JSON.stringify(json),
     contentType: "application/json",  //缺失会出现URL编码，无法转成json对象
     success: function (result) {
-      console.info(result);
       if (result != null) {
         if (result.code == 200) {
           $('#rdc_login').hide();
@@ -104,10 +108,11 @@ function login() {
 function initRDC() {
   getDBList();
   $("#query").keypress(function (e) {
-    if (e.which == 13) {
+    if (e.keyCode == 13) {
       queryFunction();
     }
   });
+
   $("#dbwindow").show();
   $("#sqlCommand").show();
   $("#spwindow").hide();
@@ -560,9 +565,9 @@ function queryFunction() {
 }
 
 function downloadFile(path) {
-  if (rootUrlWithUrlParam.indexOf("?")!=-1){
+  if (rootUrlWithUrlParam.indexOf("?") != -1) {
     window.location = rootUrlWithUrlParam + "&downloadFile=" + path;
-  }else {
+  } else {
     window.location = rootUrlWithUrlParam + "?downloadFile=" + path;
   }
 }
@@ -604,13 +609,11 @@ function getSpList() {
       if (result.code == 200) {
         var spList = result.spList;
         $('#sp-list').empty();
-        var isSelectionDone = false;
         for (var count = 0; count < spList.length; count++) {
           $("#sp-list").append("<a href='#' id=" + spList[count].fileName + " class='list-group-item' onClick='getData(\"" + spList[count].fileName + "\",\"" + spList[count].path + "\",\"" + false + "\")'>" + spList[count].fileName + "</a>");
         }
-        if (!isSelectionDone) {
-          isSelectionDone = true;
-          $('#sp-list').find('a').trigger('click');
+        if(spList.length>0){
+          getData(spList[count].fileName,spList[count].path,false);
         }
       }
     }
@@ -776,9 +779,8 @@ function makeDir() {
 }
 
 function uploadFile() {
-
   var files = document.getElementById("uploadFileBtn").files;
-  if (typeof (files) == "undefined" || files.size <= 0) {
+  if (typeof (files) == "undefined" || files.length <= 0) {
     alert("请选择图片");
     return;
   }
@@ -798,6 +800,7 @@ function uploadFile() {
     url = rootUrlWithUrlParam + "&uploadPath=" + filedir + "&random=" + Math.random();
   }
   document.getElementById("uploadFileBtn").value = '';
+
   $.ajax({
     url: url,
     data: formFile,
@@ -883,7 +886,6 @@ function openDatabaseAndGetTableList(dbname, path) {
 
 }
 
-//send update database request to server
 function db_update(updatedData, callback) {
   var selectedTableElement = $("#table-list .list-group-item.selected");
   var filteredUpdatedData = updatedData.map(function (columnData) {
