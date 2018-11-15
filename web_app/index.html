@@ -5,48 +5,34 @@
     <title>RemoteDataController</title>
     <meta charset="utf-8">
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/dataTables.bootstrap.min.js"></script>
-    <script src="js/jquery.dataTables.min.js"></script>
+    <script src="js/datatables.min.js"></script>
     <script src="js/dataTables.altEditor.free.js"></script>
-    <script src="js/dataTables.buttons.min.js"></script>
-    <script src="js/dataTables.select.min.js"></script>
-    <script src="js/dataTables.responsive.min.js"></script>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="custom.css" rel="stylesheet">
+    <link href="css/datatables.min.css" rel="stylesheet">
     <link href="css/jquery.dataTables.min.css" rel="stylesheet">
-    <link href="css/buttons.dataTables.min.css" rel="stylesheet">
-    <link href="css/select.dataTables.min.css" rel="stylesheet">
-    <link href="css/responsive.dataTables.min.css" rel="stylesheet">
-    <!-- Pretty Photo -->
-    <link rel="stylesheet" type="text/css" href="css/prettyPhoto.css"/>
 
-    <!-- mobile setting -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="images/favicon.ico">
 </head>
 <body>
-<div id="app"><img src="images/bg.jpg" alt="" id="background"/>
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation"
-         style="background-color: #333 !important">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div id="reload" class="navbar-header">
-                <a class="navbar-brand" style="color: #f7f7f7">Remote&nbspData&nbspController</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="https://github.com/itgowo" style="color: #f7f7f7;" target="_blank">Github</a>
-                    </li>
-                    <li><a href="http://itgowo.com" style="color: #f7f7f7;" target="_blank">IT狗窝</a></li>
-                </ul>
-            </div>
+<nav class="navbar navbar-default navbar-fixed-top" style="background-color: #333 !important">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div id="reload" class="navbar-header">
+            <a class="navbar-brand" style="color: #f7f7f7">Remote&nbspData&nbspController</a>
         </div>
-    </nav>
-</div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="https://github.com/itgowo" style="color: #f7f7f7;" target="_blank">Github</a>
+                </li>
+                <li><a href="http://itgowo.com" style="color: #f7f7f7;" target="_blank">IT狗窝</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
 <div id="rdc_layout" style="min-height: 70%;padding-bottom: 80px" hidden>
     <div style="margin-top:100px;width:90%;margin-left:auto;margin-right:auto;left:10%;right:10%;">
         <div class="btn-group btn-group-justified" role="group" aria-label="..."
@@ -117,7 +103,8 @@
             <div id="parent-data-divfm" class="col-sm-0"></div>
         </div>
     </div>
-    <div id="sqlCommand" class="navbar-fixed-bottom" style="padding-left: 30px;padding-right: 30px;display: none">
+    <div id="sqlCommand" class="navbar navbar-default navbar-fixed-bottom"
+         style="padding-left: 30px;padding-right: 30px;display: none">
         <div class="col-sm-12">
             <button id="run-query" type="submit" onclick="queryFunction()" class="btn btn-primary pull-right disabled">
                 执行SQL
@@ -129,7 +116,8 @@
         </div>
     </div>
 </div>
-<div id="rdc_login"><h1>欢迎使用远程数据控制服务</h1>
+<div id="rdc_login" style="min-height: 70%;padding-bottom: 80px">
+    <h1>欢迎使用远程数据控制服务</h1>
     <div class="login-form">
         <form>
             <input id="ClientId" type="text" class="text" value="设备ID"

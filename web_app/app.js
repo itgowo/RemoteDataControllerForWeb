@@ -239,9 +239,7 @@ function inflateDataFromDb(result) {
     var columnData = result.tableData.tableDatas;
     for (var i = 0; i < columnHeader.length; i++) {
       columnHeader[i]['targets'] = i;
-      columnHeader[i]['data'] = function (data, type, val, meta) {
-        return data[meta.col].value;
-      }
+      columnHeader[i]['data'] = columnHeader[i].title;
     }
     var tableId = "#db-data";
     if ($.fn.DataTable.isDataTable(tableId)) {
@@ -253,29 +251,35 @@ function inflateDataFromDb(result) {
 
     var availableButtons = [];
     if (result.editable) {
+      // var editor=new $.fn.dataTable.Editor();
       availableButtons = [
-        {
-          text: '添加',
-          name: 'add' // don not change name
-        },
-        {
-          extend: 'selected', // Bind to Selected row
-          text: '编辑',
-          name: 'edit'        // do not change name
-        },
-        {
-          extend: 'selected',
-          text: '删除',
-          name: 'delete'
-        }
+        // { extend: "create", editor: editor },
+        // { extend: "edit",   editor: editor },
+        // { extend: "remove", editor: editor },
+        {text: '添加', name: 'add'},
+        {extend: 'selected', text: '编辑', name: 'edit'},
+        {extend: 'selected', text: '删除', name: 'delete'},
+        // {
+        //   extend: 'collection',
+        //   text: '导出',
+        //   buttons: [
+        //     'copy',
+        //     'excel',
+        //     'csv',
+        //     'pdf',
+        //     'print'
+        //   ]
+        // },
+        // {extend: 'colvis', text: '选择显示列'},
       ];
     }
 
     // console.info(columnHeader);
     $(tableId).dataTable({
-      "columnDefs": columnHeader,
-      "processing": true,
-      "serverSide": true,
+      columnDefs: columnHeader,
+      processing: true,
+      serverSide: true,
+      responsive: true,
       ajax: function (data, callback, settings) {
         //封装请求参数
         var param = {};
@@ -301,11 +305,23 @@ function inflateDataFromDb(result) {
             returnData.recordsTotal = result.tableData.dataCount;//返回数据全部记录
             returnData.recordsFiltered = result.tableData.dataCount;//后台不实现过滤功能，每次查询均视作全部结果
             returnData.data = result.tableData.tableDatas;//返回的数据列表
+            // for (var i = 0; i < result.tableData.tableDatas.length; i++) {
+            //   returnData.data[i] = result.tableData.tableDatas[i].map(function (item, index) {
+            //     // return item = item
+            //     item = {value: result.tableData.tableDatas[i][index], dataType: columnHeader[index].dataType};
+            //     return item
+            //   })
+            // }
+
             for (var i = 0; i < result.tableData.tableDatas.length; i++) {
-              returnData.data[i] = result.tableData.tableDatas[i].map(function (item, index) {
-                return item = {value: item, dataType: columnHeader[index].dataType}
-              })
+              var temp = {};
+              for (var j = 0; j < result.tableData.tableDatas[i].length; j++) {
+                temp[columnHeader[j].title] = result.tableData.tableDatas[i][j];
+                // temp['dataType'] =columnHeader[j].dataType;
+              }
+              returnData.data[i] =temp;
             }
+            console.info(returnData)
             // console.log(returnData);
             //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
             //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
@@ -317,39 +333,37 @@ function inflateDataFromDb(result) {
       select: 'single',
       searching: false,
       altEditor: true,     // Enable altEditor
-      "dom": "Bfrtip",
+      dom: "Bfrtip",
       buttons: availableButtons,
+      onAddRow: function(datatable, rowdata, success, error) {
+        var addRowDataArray = JSON.parse(rowdata);
+        var data = columnHeader;
+        for (var i = 0; i < data.length; i++) {
+          data[i].value = addRowDataArray[i].value;
+          data[i].dataType = addRowDataArray[i].dataType;
+        }
+        db_addData(data, callback);
+      },
+      onDeleteRow: function(datatable, rowdata, success, error) {
+        var deleteRowDataArray = JSON.parse(rowdata);
+        var data = columnHeader;
+        for (var i = 0; i < data.length; i++) {
+          data[i].value = deleteRowDataArray[i].value;
+          data[i].dataType = deleteRowDataArray[i].dataType;
+        }
+        db_delete(data, callback);
+      },
+      onEditRow: function(datatable, rowdata, success, error) {
+        console.info(rowdata);
+        // var data = columnHeader;
+        // for (var i = 0; i < data.length; i++) {
+        //   data[i].value = rowdata[i].value;
+        //   console.info(rowdata[i]);
+        //   data[i].dataType = columnHeader[i].dataType;
+        // }
+        db_update(rowdata,  success, error);
+      }
     })
-
-    $(tableId).on('update-row.dt', function (e, updatedRowData, callback) {
-      var updatedRowDataArray = JSON.parse(updatedRowData);
-      var data = columnHeader;
-      for (var i = 0; i < data.length; i++) {
-        data[i].value = updatedRowDataArray[i].value;
-        data[i].dataType = updatedRowDataArray[i].dataType;
-      }
-      db_update(data, callback);
-    });
-
-    $(tableId).on('delete-row.dt', function (e, deleteRowData, callback) {
-      var deleteRowDataArray = JSON.parse(deleteRowData);
-      var data = columnHeader;
-      for (var i = 0; i < data.length; i++) {
-        data[i].value = deleteRowDataArray[i].value;
-        data[i].dataType = deleteRowDataArray[i].dataType;
-      }
-      db_delete(data, callback);
-    });
-
-    $(tableId).on('add-row.dt', function (e, addRowData, callback) {
-      var addRowDataArray = JSON.parse(addRowData);
-      var data = columnHeader;
-      for (var i = 0; i < data.length; i++) {
-        data[i].value = addRowDataArray[i].value;
-        data[i].dataType = addRowDataArray[i].dataType;
-      }
-      db_addData(data, callback);
-    });
 
     // hack to fix alignment issue when scrollX is enabled
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
@@ -584,13 +598,11 @@ function getDBList() {
       if (result.code == 200) {
         var dbList = result.dbList;
         $('#db-list').empty();
-        var isSelectionDone = false;
         for (var count = 0; count < dbList.length; count++) {
           $("#db-list").append("<a href='#' id=" + dbList[count].fileName + " class='list-group-item' onClick='openDatabaseAndGetTableList(\"" + dbList[count].fileName + "\",\"" + dbList[count].path + "\")'>" + dbList[count].fileName + "</a>");
         }
-        if (!isSelectionDone) {
-          isSelectionDone = true;
-          $('#db-list').find('a').trigger('click');
+        if (dbList.length > 0) {
+          openDatabaseAndGetTableList(dbList[0].fileName, dbList[0].path);
         }
       }
     }
@@ -612,8 +624,8 @@ function getSpList() {
         for (var count = 0; count < spList.length; count++) {
           $("#sp-list").append("<a href='#' id=" + spList[count].fileName + " class='list-group-item' onClick='getData(\"" + spList[count].fileName + "\",\"" + spList[count].path + "\",\"" + false + "\")'>" + spList[count].fileName + "</a>");
         }
-        if(spList.length>0){
-          getData(spList[count].fileName,spList[count].path,false);
+        if (spList.length > 0) {
+          getData(spList[0].fileName, spList[0].path, false);
         }
       }
     }
@@ -886,16 +898,9 @@ function openDatabaseAndGetTableList(dbname, path) {
 
 }
 
-function db_update(updatedData, callback) {
+function db_update(updatedData,  success, error) {
   var selectedTableElement = $("#table-list .list-group-item.selected");
-  var filteredUpdatedData = updatedData.map(function (columnData) {
-    return {
-      title: columnData.title,
-      isPrimary: columnData.primary,
-      value: columnData.value,
-      dataType: columnData.dataType
-    }
-  });
+  var filteredUpdatedData = updatedData
   var requestParameters = {};
   requestParameters.action = "updateDataToDb"
   requestParameters.database = selectedTableElement.attr('data-db-name');
@@ -907,12 +912,12 @@ function db_update(updatedData, callback) {
     data: JSON.stringify(requestParameters),
     success: function (response) {
       if (response.code == 200) {
-        callback(true);
+        success;
         showSuccessInfo("数据更新成功");
         getData(requestParameters.database + "," + requestParameters.tableName);
       } else {
         showErrorInfo(response.msg)
-        callback(false);
+        error;
       }
     }
   })

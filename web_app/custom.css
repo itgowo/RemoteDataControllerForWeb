@@ -225,7 +225,6 @@ body{
     -webkit-background-size:cover;
     -moz-background-size:cover;
     -o-background-size:cover;
-    min-height:1050px;
 }
 .wrap{
     margin: 0 auto;
@@ -394,7 +393,7 @@ label.lbl-3 {
 /*--copyrights--*/
 .copy-rights{
     text-align: center;
-    margin-top: 8em;
+    margin-top: 2em;
 }
 .copy-rights p{
     color:#FFF;
