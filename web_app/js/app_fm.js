@@ -58,14 +58,14 @@ function getFileList(path) {
               dom: 'Bfrtip',
               buttons: [
                 {
-                  text: '返回上级目录',
+                  text: '返回',
                   className: 'btn-default',
                   action: function (e, dt, node, config) {
                     getFileList(File_rootPath);
                   }
                 },
                 {
-                  text: '上传文件',
+                  text: '上传',
                   className: 'btn-default',
                   action: function (e, dt, node, config) {
                     document.getElementById("uploadFileBtn").click();
@@ -93,6 +93,15 @@ function getFileList(path) {
                     dirType = "切换到扩展存储";
                     getFileList();
                   }
+                },
+                {
+                  extend: 'collection',
+                  text: '导出列表',
+                  buttons: [{extend: 'copy', text: '复制到剪贴板'},
+                    {extend: 'excel', text: '导出为Excel文件'},
+                    {extend: 'csv', text: '导出为CSV文件'},
+                    {extend: 'pdf', text: '导出为PDF文件'},
+                    {extend: 'print', text: '打印'}]
                 }
               ]
             }

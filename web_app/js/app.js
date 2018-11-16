@@ -26,6 +26,7 @@ var tableLanguage = {
     "sSortDescending": ": 以降序排列此列"
   }
 };
+var pageindex = 1//多个datatables会重复触发事件，暂时用这个过滤一下,dataTables.altEditor.free.js这个库有bug
 
 $(document).ajaxComplete(function (event, xhr, settings) {
   hideLoading();
@@ -114,12 +115,14 @@ function initRDC() {
   $("#fmwindow").hide();
 
   $("#btndb").click(function () {
+    pageindex = 1;
     $("#dbwindow").show();
     $("#sqlCommand").show();
     $("#spwindow").hide();
     $("#fmwindow").hide();
   });
   $("#btnsp").click(function () {
+    pageindex = 2;
     $("#dbwindow").hide();
     $("#sqlCommand").hide();
     $("#spwindow").show();
@@ -129,6 +132,7 @@ function initRDC() {
     }
   });
   $("#btnfm").click(function () {
+    pageindex = 3;
     $("#dbwindow").hide();
     $("#sqlCommand").hide();
     $("#spwindow").hide();
@@ -205,4 +209,45 @@ function showLoading() {
 
 function hideLoading() {
   $("#sys-loading").hide();
+}
+
+
+//转换数据库表数据结构，让各个组件能兼容处理,同时适用于共享参数文件
+function convertDataForGetData(result, columnHeader) {
+  //封装返回数据
+  var returnData = {};
+  returnData.draw = result.tableData.draw;//这里直接自行返回了draw计数器,应该由后台返回
+  returnData.recordsTotal = result.tableData.dataCount;//返回数据全部记录
+  returnData.recordsFiltered = result.tableData.dataCount;//后台不实现过滤功能，每次查询均视作全部结果
+  returnData.data = convertDataForSimpleData(result.tableData.tableDatas, columnHeader);
+  return returnData;
+}
+
+//只做数据转换，不封装
+function convertDataForSimpleData(tableDatas, columnHeader) {
+  var returnData = {};
+  returnData = tableDatas;//返回的数据列表
+  for (var i = 0; i < tableDatas.length; i++) {
+    var temp1 = {};
+    for (var j = 0; j < tableDatas[i].length; j++) {
+      temp1[columnHeader[j].title] = String(tableDatas[i][j]);
+      temp1.dataType = columnHeader[j].dataType;
+    }
+    returnData[i] = temp1;
+  }
+  return returnData;
+}
+
+//转换添加删除和更新的数据结构,适用于数据库提交和共享参数提交
+function convertDataForActionData(columnHeader, rowdata) {
+  var data = [];
+  for (var i = 0; i < columnHeader.length; i++) {
+    var itemData = {};
+    itemData.value = rowdata[columnHeader[i].title];
+    itemData.dataType = columnHeader[i].dataType;
+    itemData.title = columnHeader[i].title;
+    itemData.isPrimary = columnHeader[i].primary;
+    data.push(itemData)
+  }
+  return data;
 }

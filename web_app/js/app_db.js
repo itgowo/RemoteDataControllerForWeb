@@ -49,7 +49,7 @@ function inflateDataFromDb(result) {
       availableButtons = getDbTableButtons();
     }
 
-    $(tableId).dataTable({
+    var table_DB = $(tableId).dataTable({
       columnDefs: columnHeader,
       processing: true,
       serverSide: true,
@@ -64,17 +64,24 @@ function inflateDataFromDb(result) {
       dom: "Bfrtip",
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
-        db_addData(convertDataForActionData(columnHeader, rowdata), success, error);
+        if (pageindex != 1) {
+          return
+        }
+        db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       },
       onDeleteRow: function (datatable, rowdata, success, error) {
+        if (pageindex != 1) {
+          return
+        }
         db_delete(convertDataForActionData(columnHeader, rowdata), success, error);
       },
       onEditRow: function (datatable, rowdata, success, error) {
-        db_update(convertDataForActionData(columnHeader, rowdata), success, error);
+        if (pageindex != 1) {
+          return
+        }
+        db_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })
-
-    // hack to fix alignment issue when scrollX is enabled
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
     $(".table ").css({"width": "100%"});
     showSuccessInfo(result.msg);
@@ -114,15 +121,25 @@ function inflateDataFromDb2(result) {
       serverSide: false,
       altEditor: true,     // Enable altEditor
       dom: "Bfrtip",
+      searching:false,
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
-        db_addData(convertDataForActionData(columnHeader, rowdata), success, error);
+        if (pageindex != 1) {
+          return
+        }
+        db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       },
       onDeleteRow: function (datatable, rowdata, success, error) {
+        if (pageindex != 1) {
+          return
+        }
         db_delete(convertDataForActionData(columnHeader, rowdata), success, error);
       },
       onEditRow: function (datatable, rowdata, success, error) {
-        db_update(convertDataForActionData(columnHeader, rowdata), success, error);
+        if (pageindex != 1) {
+          return
+        }
+        db_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
@@ -214,20 +231,20 @@ function openDatabaseAndGetTableList(dbname, path) {
 
 }
 
-function db_update(actionData, success, error) {
-  db_DoActionAddOrUpdateOrDelete("updateDataToDb", actionData, success, error);
+function db_update(actionData, success, error, rowdata) {
+  db_DoActionAddOrUpdateOrDelete("updateDataToDb", actionData, success, error, rowdata);
 }
 
 function db_delete(deleteData, success, error) {
-  db_DoActionAddOrUpdateOrDelete("deleteDataFromDb", deleteData, success, error);
+  db_DoActionAddOrUpdateOrDelete("deleteDataFromDb", deleteData, success, error, true);
 }
 
-function db_addData(addData, success, error) {
-  db_DoActionAddOrUpdateOrDelete("addDataToDb", addData, success, error);
+function db_addData(addData, success, error, rowdata) {
+  db_DoActionAddOrUpdateOrDelete("addDataToDb", addData, success, error, rowdata);
 }
 
 //数据库数据操作，增删改，封装方法
-function db_DoActionAddOrUpdateOrDelete(action, actionData, success, error) {
+function db_DoActionAddOrUpdateOrDelete(action, actionData, success, error, rowdata) {
   var requestParameters = {
     action: action,
     database: dbFileName,
@@ -241,7 +258,7 @@ function db_DoActionAddOrUpdateOrDelete(action, actionData, success, error) {
     data: JSON.stringify(requestParameters),
     success: function (response) {
       if (response.code == 200) {
-        success(true);
+        success(rowdata);
       } else {
         error(response);
       }
@@ -269,39 +286,6 @@ function db_getDbDataForServerSide(columnHeader, data, callback, settings) {
       callback(convertDataForGetData(result, columnHeader));
     }
   });
-}
-
-//转换添加删除和更新的数据结构
-function convertDataForActionData(columnHeader, rowdata) {
-  var data = [];
-  for (var i = 0; i < columnHeader.length; i++) {
-    var itemData = {};
-    itemData.value = rowdata[columnHeader[i].title];
-    itemData.dataType = columnHeader[i].dataType;
-    itemData.title = columnHeader[i].title;
-    itemData.isPrimary = columnHeader[i].primary;
-    data.push(itemData)
-  }
-  return data;
-}
-
-//转换数据库表数据结构，让各个组件能兼容处理
-function convertDataForGetData(result, columnHeader) {
-  //封装返回数据
-  var returnData = {};
-  returnData.draw = result.tableData.pageIndex;//这里直接自行返回了draw计数器,应该由后台返回
-  returnData.recordsTotal = result.tableData.dataCount;//返回数据全部记录
-  returnData.recordsFiltered = result.tableData.dataCount;//后台不实现过滤功能，每次查询均视作全部结果
-  returnData.data = result.tableData.tableDatas;//返回的数据列表
-  for (var i = 0; i < result.tableData.tableDatas.length; i++) {
-    var temp1 = {};
-    for (var j = 0; j < result.tableData.tableDatas[i].length; j++) {
-      temp1[columnHeader[j].title] = result.tableData.tableDatas[i][j];
-      temp1.dataType = columnHeader[j].dataType;
-    }
-    returnData.data[i] = temp1;
-  }
-  return returnData;
 }
 
 //获取数据库数据表格操作按钮

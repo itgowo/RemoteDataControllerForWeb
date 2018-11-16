@@ -30,12 +30,9 @@ function inflateDataFromSp(result) {
 
   if (result.code == 200) {
     var columnHeader = result.tableData.tableColumns;
-    var columnData = result.tableData.tableDatas;
     for (var i = 0; i < columnHeader.length; i++) {
       columnHeader[i]['targets'] = i;
-      columnHeader[i]['data'] = function (data, type, val, meta) {
-        return data[meta.col].value;
-      }
+      columnHeader[i]['data'] = columnHeader[i].title;
     }
 
     var tableId = "#sp-data";
@@ -54,58 +51,37 @@ function inflateDataFromSp(result) {
 
     var availableButtons = [];
     if (result.editable) {
-      availableButtons = [
-        {
-          text: '添加',
-          name: 'add' // don not change name
-        },
-        {
-          extend: 'selected', // Bind to Selected row
-          text: '编辑',
-          name: 'edit'        // do not change name
-        },
-        {
-          extend: 'selected',
-          text: '删除',
-          name: 'delete'
-        }
-      ];
+      availableButtons = getSpTableButtons();
     }
-    var changecolumnData = []
-    for (var i = 0; i < columnData.length; i++) {
-      changecolumnData[i] = columnData[i].map(function (item, index) {
-        return item = {value: item, dataType: columnHeader[index].dataType}
-      })
-    }
-
-    $(tableId).dataTable({
-      "columnDefs": columnHeader,
-      "data": changecolumnData,
+    var changecolumnData = convertDataForGetData(result, columnHeader);
+    var table_SP = $(tableId).dataTable({
+      columnDefs: columnHeader,
+      data: changecolumnData.data,
       language: tableLanguage,
       select: 'single',
       searching: false,
-      altEditor: true,     // Enable altEditor
-      "dom": "Bfrtip",
+      altEditor: true,
+      dom: "Bfrtip",
       buttons: availableButtons,
+      onAddRow: function (datatable, rowdata, success, error) {
+        if (pageindex != 2) {
+          return;
+        }
+        sp_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
+      },
+      onDeleteRow: function (datatable, rowdata, success, error) {
+        if (pageindex != 2) {
+          return;
+        }
+        sp_delete(convertDataForActionData(columnHeader, rowdata), success, error);
+      },
       onEditRow: function (datatable, rowdata, success, error) {
-        console.info('in TABLE 2');
-
-        sp_update(rowdata, success)
+        if (pageindex != 2) {
+          return;
+        }
+        sp_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })
-
-    $(tableId).on('delete-row.dt', function (e, deleteRowData, callback) {
-        var deleteRowDataArray = JSON.parse(deleteRowData);
-        sp_delete(deleteRowDataArray, callback);
-      }
-    );
-
-    $(tableId).on('add-row.dt', function (e, addRowData, callback) {
-      var addRowDataArray = JSON.parse(addRowData);
-      sp_addData(addRowDataArray, callback);
-    });
-
-    // hack to fix alignment issue when scrollX is enabled
     $(".dataTables_scrollHeadInner").css({"width": "100%"});
     $(".table ").css({"width": "100%"});
     showSuccessInfo(result.msg);
@@ -140,66 +116,56 @@ function getSpList() {
 }
 
 
-function sp_update(updatedData, callback) {
-  var requestParameters = {};
-  requestParameters.action = "updateDataToSp"
-  requestParameters.spFileName = SPFileName;
-  requestParameters.RowDataRequests = updatedData;
+function sp_update(actionData, success, error, rowdata) {
+  sp_DoActionAddOrUpdateOrDelete("updateDataToSp", actionData, success, error, rowdata);
+}
+
+function sp_delete(actionData, success, error) {
+  sp_DoActionAddOrUpdateOrDelete("deleteDataFromSp", actionData, success, error, true);
+}
+
+function sp_addData(actionData, success, error, rowdata) {
+  sp_DoActionAddOrUpdateOrDelete("addDataToSp", actionData, success, error, rowdata);
+}
+
+//共享参数数据操作，增删改，封装方法
+function sp_DoActionAddOrUpdateOrDelete(action, actionData, success, error, rowdata) {
+  var requestParameters = {
+    action: action,
+    spFileName: SPFileName,
+    RowDataRequests: actionData
+  };
   $.ajax({
     url: rootUrlWithUrlParam,
     type: 'POST',
+    contentType: "application/json; charset=utf-8",
     data: JSON.stringify(requestParameters),
     success: function (response) {
       if (response.code == 200) {
-        callback(true);
-        showSuccessInfo("数据更新成功");
+        success(rowdata);
       } else {
-        showErrorInfo(response.msg)
-        callback(false);
+        error(response);
       }
-    }
+    },
+    error: error
   })
 }
 
-function sp_delete(updatedData, callback) {
-  var requestParameters = {};
-  requestParameters.action = "deleteDataFromSp"
-  requestParameters.spFileName = SPFileName;
-  requestParameters.RowDataRequests = updatedData;
-  $.ajax({
-    url: rootUrlWithUrlParam,
-    type: 'POST',
-    data: JSON.stringify(requestParameters),
-    success: function (response) {
-      if (response.code == 200) {
-        callback(true);
-        showSuccessInfo("数据删除成功");
-      } else {
-        showErrorInfo(response.msg)
-        callback(false);
-      }
+//获取共享参数数据表格操作按钮
+function getSpTableButtons() {
+  var availableButtons = [
+    {text: '添加', name: 'add'},
+    {extend: 'selected', text: '编辑', name: 'edit'},
+    {extend: 'selected', text: '删除', name: 'delete'},
+    {
+      extend: 'collection',
+      text: '导出',
+      buttons: [{extend: 'copy', text: '复制到剪贴板'},
+        {extend: 'excel', text: '导出为Excel文件'},
+        {extend: 'csv', text: '导出为CSV文件'},
+        {extend: 'pdf', text: '导出为PDF文件'},
+        {extend: 'print', text: '打印'}]
     }
-  })
-}
-
-function sp_addData(updatedData, callback) {
-  var requestParameters = {};
-  requestParameters.action = "addDataToSp"
-  requestParameters.spFileName = SPFileName;
-  requestParameters.RowDataRequests = updatedData;
-  $.ajax({
-    url: rootUrlWithUrlParam,
-    type: 'POST',
-    data: JSON.stringify(requestParameters),
-    success: function (response) {
-      if (response.code == 200) {
-        callback(true);
-        showSuccessInfo("数据添加成功");
-        getDataFromSp(requestParameters.spFileName, "");
-      } else {
-        showErrorInfo(response.msg)
-        callback(false);
-      }
-    }
-  })
+  ];
+  return availableButtons;
 }

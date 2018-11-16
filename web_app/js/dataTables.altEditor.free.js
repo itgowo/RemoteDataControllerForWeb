@@ -385,7 +385,6 @@
         $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
           rowDataArray[$(this).attr('id')] = $(this).val();
         });
-
         that.onEditRow(that,
           rowDataArray,
           function (data, b, c, d, e) {
@@ -621,8 +620,6 @@
           rowDataArray[$(this).attr('id')] = $(this).val();
         });
 
-//console.log(rowDataArray); //DEBUG
-
         that.onAddRow(that,
           rowDataArray,
           function (data) {
@@ -660,11 +657,7 @@
        * Called after a row has been inserted on server
        */
       _addRowCallback: function (response, status, more) {
-
-        //TODO should honor dt.ajax().dataSrc
-
         var data = JSON.parse(response);
-
         $('#altEditor-modal .modal-body .alert').remove();
 
         var message = '<div class="alert alert-success" role="alert">' +
@@ -684,7 +677,6 @@
        * Called after a row has been updated on server
        */
       _editRowCallback: function (response, status, more) {
-
         //TODO should honor dt.ajax().dataSrc
 
         var data = JSON.parse(response);
@@ -695,11 +687,9 @@
           '<strong>操作成功!</strong>' +
           '</div>';
         $('#altEditor-modal .modal-body').append(message);
-
         this.s.dt.row({
           selected: true
         }).data(data);
-        this.s.dt.draw();
 
         // Disabling submit button
         $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
