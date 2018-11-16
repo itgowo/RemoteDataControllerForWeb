@@ -328,7 +328,7 @@
               for (var i = 0; i < columnDefs[j].options.length; i++) {
                 // Assigning the selected value of the <selected> option
                 if (adata.data()[0][columnDefs[j].name]
-                    .indexOf(columnDefs[j].options[i])>= 0) {
+                    .indexOf(columnDefs[j].options[i]) >= 0) {
                   options += "<option value='"
                     + columnDefs[j].options[i] + "'selected>"
                     + columnDefs[j].options[i] + "</option>";
@@ -349,9 +349,9 @@
         data += "</form>";
 
         $('#altEditor-modal').on('show.bs.modal', function () {
-          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-            '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn">Edit</button>';
-          $('#altEditor-modal').find('.modal-title').html('Edit Record');
+          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
+            '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn">提交更改</button>';
+          $('#altEditor-modal').find('.modal-title').html('编辑记录');
           $('#altEditor-modal').find('.modal-body').html(data);
           $('#altEditor-modal').find('.modal-footer').html(btns);
         });
@@ -386,12 +386,13 @@
           rowDataArray[$(this).attr('id')] = $(this).val();
         });
 
-        console.log(rowDataArray); //DEBUG
-
         that.onEditRow(that,
           rowDataArray,
-          function(data,b,c,d,e){ that._editRowCallback(data,b,c,d,e); },
-          function(data){ that._errorCallback(data);
+          function (data, b, c, d, e) {
+            that._editRowCallback(data, b, c, d, e);
+          },
+          function (data) {
+            that._errorCallback(data);
           });
       },
 
@@ -446,9 +447,9 @@
         data += "</form>";
 
         $('#altEditor-modal').on('show.bs.modal', function () {
-          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-            '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">Delete</button>';
-          $('#altEditor-modal').find('.modal-title').html('Delete Record');
+          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
+            '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">删除</button>';
+          $('#altEditor-modal').find('.modal-title').html('删除记录');
           $('#altEditor-modal').find('.modal-body').html(data);
           $('#altEditor-modal').find('.modal-footer').html(btns);
         });
@@ -474,14 +475,16 @@
         for (var i = 0; i < dt.context[0].aoColumns.length; i++) {
           // .data is the attribute name, if any; .idx is the column index, so it should always exists
           var name = dt.context[0].aoColumns[i].data ? dt.context[0].aoColumns[i].data :
-            dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData :
-              dt.context[0].aoColumns[i].idx;
+            dt.context[0].aoColumns[i].mData ? dt.context[0].aoColumns[i].mData : dt.context[0].aoColumns[i].idx;
           jsonDataArray[name] = adata.data()[0][name];
         }
         that.onDeleteRow(that,
           jsonDataArray,
-          function(data){ that._deleteRowCallback(data); },
-          function(data){ that._errorCallback(data);
+          function (data) {
+            that._deleteRowCallback(data);
+          },
+          function (data) {
+            that._errorCallback(data);
           });
       },
 
@@ -586,15 +589,11 @@
         data += "</form>";
 
         $('#altEditor-modal').on('show.bs.modal', function () {
-          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">Close</button>' +
-            '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">Add</button>';
-          $('#altEditor-modal').find('.modal-title').html(
-            'Add Record');
-          $('#altEditor-modal').find('.modal-body')
-            .html(data);
-          $('#altEditor-modal')
-            .find('.modal-footer')
-            .html(btns);
+          var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
+            '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">添加</button>';
+          $('#altEditor-modal').find('.modal-title').html('添加记录');
+          $('#altEditor-modal').find('.modal-body').html(data);
+          $('#altEditor-modal').find('.modal-footer').html(btns);
         });
 
         $('#altEditor-modal').modal('show');
@@ -626,8 +625,11 @@
 
         that.onAddRow(that,
           rowDataArray,
-          function(data){ that._addRowCallback(data); },
-          function(data){ that._errorCallback(data);
+          function (data) {
+            that._addRowCallback(data);
+          },
+          function (data) {
+            that._errorCallback(data);
           });
 
       },
@@ -639,12 +641,12 @@
         $('#altEditor-modal .modal-body .alert').remove();
 
         var message = '<div class="alert alert-success" role="alert">' +
-          '<strong>Success!</strong>' +
+          '<strong>操作成功!</strong>' +
           '</div>';
         $('#altEditor-modal .modal-body').append(message);
 
         this.s.dt.row({
-          selected : true
+          selected: true
         }).remove();
         this.s.dt.draw();
 
@@ -666,7 +668,7 @@
         $('#altEditor-modal .modal-body .alert').remove();
 
         var message = '<div class="alert alert-success" role="alert">' +
-          '<strong>Success!</strong>' +
+          '<strong>操作成功!</strong>' +
           '</div>';
         $('#altEditor-modal .modal-body').append(message);
 
@@ -690,12 +692,12 @@
         $('#altEditor-modal .modal-body .alert').remove();
 
         var message = '<div class="alert alert-success" role="alert">' +
-          '<strong>Success!</strong>' +
+          '<strong>操作成功!</strong>' +
           '</div>';
         $('#altEditor-modal .modal-body').append(message);
 
         this.s.dt.row({
-          selected : true
+          selected: true
         }).data(data);
         this.s.dt.draw();
 
@@ -709,14 +711,19 @@
        * Called after AJAX server returned an error
        */
       _errorCallback: function (response, status, more) {
-        var error = resp;
-        $('#altEditor-modal .modal-body .alert').remove();
+        var error = response;
         var errstr = "There was an unknown error!";
-        if (error.responseJSON && error.responseJSON.errors) {
-          errstr = "";
-          for (var key in error.responseJSON.errors) {
-            errstr += error.responseJSON.errors[key][0];
+        if (typeof(error.code) == "undefined") {
+          $('#altEditor-modal .modal-body .alert').remove();
+          if (error.responseJSON && error.responseJSON.errors) {
+            errstr = "";
+            for (var key in error.responseJSON.errors) {
+              errstr += error.responseJSON.errors[key][0];
+            }
           }
+        } else {
+          error.status = error.code;
+          errstr = error.msg;
         }
         var message = '<div class="alert alert-danger" role="alert">' +
           '<strong>Error!</strong> ' + (error.status == null ? "" : 'Response code: ' + error.status) + " " + errstr +
@@ -728,7 +735,7 @@
       /**
        * Default callback for insertion: mock webservice, always success.
        */
-      onAddRow: function(dt, rowdata, success, error) {
+      onAddRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for INSERT");
         success(rowdata);
       },
@@ -736,7 +743,7 @@
       /**
        * Default callback for editing: mock webservice, always success.
        */
-      onEditRow: function(dt, rowdata, success, error) {
+      onEditRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for UPDATE");
         success(rowdata);
       },
@@ -744,7 +751,7 @@
       /**
        * Default callback for deletion: mock webservice, always success.
        */
-      onDeleteRow: function(dt, rowdata, success, error) {
+      onDeleteRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for DELETE");
         success(rowdata);
       },

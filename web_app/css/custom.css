@@ -219,7 +219,7 @@ img{max-width:100%;}
 /*end reset*/
 /****-----start-body----****/
 body{
-    background: url(images/bg.jpg) no-repeat 0px 0px;
+    background: url(../images/bg.jpg) no-repeat 0px 0px;
     font-family: 'Open Sans', sans-serif;
     background-size:cover;
     -webkit-background-size:cover;
@@ -238,7 +238,7 @@ body a,form li,input[type="submit"],input[type="text"],.sixth-login input[type="
 }
 /*--close--*/
 .close{
-    background: url('images/close.png') no-repeat 0px 0px;
+    background: url('../images/close.png') no-repeat 0px 0px;
     cursor: pointer;
     width: 20px;
     height: 20px;
@@ -299,7 +299,7 @@ input[type="text"] {
     color: #9199aa;
     font-size: 18px;
     outline: none;
-    background: url(images/adm.png) no-repeat 10px 15px;
+    background: url(../images/adm.png) no-repeat 10px 15px;
     border: none;
     font-weight: 100;
     border-bottom: 1px solid#484856;
@@ -311,7 +311,7 @@ input[type="password"]{
     color: #dd3e3e;
     font-size: 18px;
     outline: none;
-    background: url(images/key.png) no-repeat 10px 23px;
+    background: url(../images/key.png) no-repeat 10px 23px;
     border: none;
     font-weight: 100;
     border-bottom: 1px solid#484856;
@@ -323,7 +323,7 @@ input[type="text2"]{
     color: #9199aa;
     font-size: 18px;
     outline: none;
-    background: url(images/key.png) no-repeat 10px 15px;
+    background: url(../images/key.png) no-repeat 10px 15px;
     border: none;
     font-weight: 100;
     border-bottom: 1px solid#484856;
