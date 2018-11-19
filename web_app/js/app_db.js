@@ -6,15 +6,13 @@ var currentTableName;//当前操作数据库中表的名称
 var downloadFilePath1;//当前操作数据库路径，完整存储位置
 
 
-function getDataFromDb(fileName, dbtableName) {
+function getDataColumnFromDb(fileName, dbtableName) {
   var getData
   currentTableName = dbtableName;
   getData = {
-    action: "getDataFromDbTable",
+    action: "getDataColumnFromDbTable",
     database: fileName,
     tableName: dbtableName,
-    pageIndex: 1,
-    pageSize: 10
   }
   $.ajax({
     type: "POST",
@@ -121,7 +119,7 @@ function inflateDataFromDb2(result) {
       serverSide: false,
       altEditor: true,     // Enable altEditor
       dom: "Bfrtip",
-      searching:false,
+      searching: false,
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
         if (pageindex != 1) {
@@ -221,7 +219,7 @@ function openDatabaseAndGetTableList(dbname, path) {
         });
         $('#table-list').empty()
         for (var count = 0; count < tableList.length; count++) {
-          $("#table-list").append("<a href='#' data-db-name='" + dbname + "' data-table-name='" + tableList[count] + "' class='list-group-item' onClick='getDataFromDb(\"" + dbname + "\",\"" + tableList[count] + "\");'>" + tableList[count] + "</a>");
+          $("#table-list").append("<a href='#' data-db-name='" + dbname + "' data-table-name='" + tableList[count] + "' class='list-group-item' onClick='getDataColumnFromDb(\"" + dbname + "\",\"" + tableList[count] + "\");'>" + tableList[count] + "</a>");
         }
       } else {
         showErrorInfo(result.msg);
@@ -268,7 +266,7 @@ function db_DoActionAddOrUpdateOrDelete(action, actionData, success, error, rowd
 }
 
 //数据请求分页模式
-function db_getDbDataForServerSide(columnHeader, data, callback, settings) {
+function db_getDbDataForServerSide(columnHeader,data, callback, settings) {
   var param = {};
   param.pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
   param.pageIndex = (data.start / data.length) + 1;//开始的记录序号
@@ -283,7 +281,8 @@ function db_getDbDataForServerSide(columnHeader, data, callback, settings) {
     dataType: "json",
     contentType: 'application/json; charset=utf-8',
     success: function (result) {
-      callback(convertDataForGetData(result, columnHeader));
+      console.log(callback)
+      callback(convertDataForGetData(result));
     }
   });
 }

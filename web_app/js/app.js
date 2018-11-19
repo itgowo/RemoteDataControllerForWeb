@@ -200,7 +200,7 @@ function showErrorInfo(message) {
   snackbarElement.html(message)
   setTimeout(function () {
     snackbarElement.removeClass("show");
-  }, 3000);
+  }, 30000);
 }
 
 function showLoading() {
@@ -213,13 +213,13 @@ function hideLoading() {
 
 
 //转换数据库表数据结构，让各个组件能兼容处理,同时适用于共享参数文件
-function convertDataForGetData(result, columnHeader) {
+function convertDataForGetData(result) {
   //封装返回数据
   var returnData = {};
   returnData.draw = result.tableData.draw;//这里直接自行返回了draw计数器,应该由后台返回
   returnData.recordsTotal = result.tableData.dataCount;//返回数据全部记录
   returnData.recordsFiltered = result.tableData.dataCount;//后台不实现过滤功能，每次查询均视作全部结果
-  returnData.data = convertDataForSimpleData(result.tableData.tableDatas, columnHeader);
+  returnData.data = convertDataForSimpleData(result.tableData.tableDatas, result.tableData.tableColumns);
   return returnData;
 }
 
