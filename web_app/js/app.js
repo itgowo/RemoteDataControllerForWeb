@@ -26,7 +26,6 @@ var tableLanguage = {
     "sSortDescending": ": 以降序排列此列"
   }
 };
-var pageindex = 1//多个datatables会重复触发事件，暂时用这个过滤一下,dataTables.altEditor.free.js这个库有bug
 
 $(document).ajaxComplete(function (event, xhr, settings) {
   hideLoading();
@@ -115,14 +114,12 @@ function initRDC() {
   $("#fmwindow").hide();
 
   $("#btndb").click(function () {
-    pageindex = 1;
     $("#dbwindow").show();
     $("#sqlCommand").show();
     $("#spwindow").hide();
     $("#fmwindow").hide();
   });
   $("#btnsp").click(function () {
-    pageindex = 2;
     $("#dbwindow").hide();
     $("#sqlCommand").hide();
     $("#spwindow").show();
@@ -132,7 +129,6 @@ function initRDC() {
     }
   });
   $("#btnfm").click(function () {
-    pageindex = 3;
     $("#dbwindow").hide();
     $("#sqlCommand").hide();
     $("#spwindow").hide();

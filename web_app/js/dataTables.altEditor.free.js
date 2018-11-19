@@ -68,44 +68,22 @@
     // User and defaults configuration object
     this.c = $.extend(true, {}, DataTable.defaults.altEditor,
       altEditor.defaults, opts);
-
-    /**
-     * @namespace Settings object which contains customisable information
-     *            for altEditor instance
-     */
     this.s = {
-      /** @type {DataTable.Api} DataTables' API instance */
       dt: new DataTable.Api(dt),
-
-      /** @type {String} Unique namespace for events attached to the document */
-      namespace: '.altEditor' + (_instance++)
+      namespace: 'altEditor' + (_instance++)
     };
 
-    /**
-     * @namespace Common and useful DOM elements for the class instance
-     */
     this.dom = {
       /** @type {jQuery} altEditor handle */
       modal: $('<div class="dt-altEditor-handle"/>'),
     };
-
-    /* Constructor logic */
     this._constructor();
   }
 
   $.extend(
     altEditor.prototype,
     {
-      /***************************************************************
-       * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-       * Constructor * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-       */
 
-      /**
-       * Initialise the RowReorder instance
-       *
-       * @private
-       */
       _constructor: function () {
         var that = this;
         var dt = this.s.dt;
@@ -126,16 +104,6 @@
         });
       },
 
-      /***************************************************************
-       * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-       * Private methods * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-       */
-
-      /**
-       * Setup dom and bind button actions
-       *
-       * @private
-       */
       _setup: function () {
         var that = this;
         var dt = this.s.dt;
@@ -166,7 +134,7 @@
             that._openEditModal();
           });
 
-          $(document).on('click', '#editRowBtn', function (e) {
+          $(document).on('click', '#editRowBtn' + this.s.namespace, function (e) {
             if (that._inputValidation()) {
               e.preventDefault();
               e.stopPropagation();
@@ -181,7 +149,7 @@
             that._openDeleteModal();
           });
 
-          $(document).on('click', '#deleteRowBtn', function (e) {
+          $(document).on('click', '#deleteRowBtn' + that.s.namespace, function (e) {
             e.preventDefault();
             e.stopPropagation();
             that._deleteRow();
@@ -194,8 +162,8 @@
           dt.button('add:name').action(function (e, dt, node, config) {
             that._openAddModal();
           });
-
-          $(document).on('click', '#addRowBtn', function (e) {
+          $(document).on('click', '#addRowBtn' + this.s.namespace, function (e) {
+            console.info("click")
             if (that._inputValidation()) {
               e.preventDefault();
               e.stopPropagation();
@@ -350,7 +318,7 @@
 
         $('#altEditor-modal').on('show.bs.modal', function () {
           var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
-            '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn">提交更改</button>';
+            '<button type="button" data-content="remove" class="btn btn-primary" id="editRowBtn' + that.s.namespace + '" >提交更改</button>';
           $('#altEditor-modal').find('.modal-title').html('编辑记录');
           $('#altEditor-modal').find('.modal-body').html(data);
           $('#altEditor-modal').find('.modal-footer').html(btns);
@@ -447,7 +415,7 @@
 
         $('#altEditor-modal').on('show.bs.modal', function () {
           var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
-            '<button type="button"  data-content="remove" class="btn btn-danger" id="deleteRowBtn">删除</button>';
+            '<button type="button"  data-content="remove" class="btn btn-danger"  id="deleteRowBtn' + that.s.namespace + '">删除</button>';
           $('#altEditor-modal').find('.modal-title').html('删除记录');
           $('#altEditor-modal').find('.modal-body').html(data);
           $('#altEditor-modal').find('.modal-footer').html(btns);
@@ -589,7 +557,7 @@
 
         $('#altEditor-modal').on('show.bs.modal', function () {
           var btns = '<button type="button" data-content="remove" class="btn btn-default" data-dismiss="modal">关闭</button>' +
-            '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn">添加</button>';
+            '<button type="button"  data-content="remove" class="btn btn-primary" id="addRowBtn' + that.s.namespace + '">添加</button>';
           $('#altEditor-modal').find('.modal-title').html('添加记录');
           $('#altEditor-modal').find('.modal-body').html(data);
           $('#altEditor-modal').find('.modal-footer').html(btns);
@@ -606,9 +574,6 @@
         }
       },
 
-      /**
-       * Callback for "Add" button
-       */
       _addRowData: function () {
         var that = this;
         var dt = this.s.dt;
@@ -619,7 +584,7 @@
         $('form[name="altEditor-form"] *').filter(':input').each(function (i) {
           rowDataArray[$(this).attr('id')] = $(this).val();
         });
-
+        console.info("_addRowData")
         that.onAddRow(that,
           rowDataArray,
           function (data) {
@@ -631,9 +596,6 @@
 
       },
 
-      /**
-       * Called after a row has been deleted on server
-       */
       _deleteRowCallback: function (response, status, more) {
         $('#altEditor-modal .modal-body .alert').remove();
 
@@ -648,14 +610,11 @@
         this.s.dt.draw();
 
         // Disabling submit button
-        $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+        $("div#altEditor-modal").find('button#addRowBtn' + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#editRowBtn" + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#deleteRowBtn" + this.s.namespace).prop('disabled', true);
       },
 
-      /**
-       * Called after a row has been inserted on server
-       */
       _addRowCallback: function (response, status, more) {
         var data = JSON.parse(response);
         $('#altEditor-modal .modal-body .alert').remove();
@@ -668,14 +627,11 @@
         this.s.dt.row.add(data).draw(false);
 
         // Disabling submit button
-        $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+        $("div#altEditor-modal").find('button#addRowBtn' + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#editRowBtn" + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#deleteRowBtn" + this.s.namespace).prop('disabled', true);
       },
 
-      /**
-       * Called after a row has been updated on server
-       */
       _editRowCallback: function (response, status, more) {
         //TODO should honor dt.ajax().dataSrc
 
@@ -692,14 +648,11 @@
         }).data(data);
 
         // Disabling submit button
-        $("div#altEditor-modal").find("button#addRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#editRowBtn").prop('disabled', true);
-        $("div#altEditor-modal").find("button#deleteRowBtn").prop('disabled', true);
+        $("div#altEditor-modal").find('button#addRowBtn' + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#editRowBtn" + this.s.namespace).prop('disabled', true);
+        $("div#altEditor-modal").find("button#deleteRowBtn" + this.s.namespace).prop('disabled', true);
       },
 
-      /**
-       * Called after AJAX server returned an error
-       */
       _errorCallback: function (response, status, more) {
         var error = response;
         var errstr = "There was an unknown error!";
@@ -722,35 +675,21 @@
         $('#altEditor-modal .modal-body').append(message);
       },
 
-      /**
-       * Default callback for insertion: mock webservice, always success.
-       */
       onAddRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for INSERT");
         success(rowdata);
       },
 
-      /**
-       * Default callback for editing: mock webservice, always success.
-       */
       onEditRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for UPDATE");
         success(rowdata);
       },
 
-      /**
-       * Default callback for deletion: mock webservice, always success.
-       */
       onDeleteRow: function (dt, rowdata, success, error) {
         console.log("Missing AJAX configuration for DELETE");
         success(rowdata);
       },
 
-      /**
-       * Validates input
-       * @returns {boolean}
-       * @private
-       */
       _inputValidation: function () {
         var that = this;
         var dt = this.s.dt;
@@ -794,13 +733,6 @@
         return isValid;
       },
 
-      /**
-       * Sanitizes input for use in HTML
-       * @param s
-       * @param preserveCR
-       * @returns {string}
-       * @private
-       */
       _quoteattr: function (s, preserveCR) {
         preserveCR = preserveCR ? '&#13;' : '\n';
         return ('' + s) /* Forces the conversion to string. */
@@ -814,19 +746,8 @@
       },
     });
 
-  /**
-   * altEditor version
-   *
-   * @static
-   * @type String
-   */
   altEditor.version = '2.0';
 
-  /**
-   * altEditor defaults
-   *
-   * @namespace
-   */
   altEditor.defaults = {
     /**
      * @type {Boolean} Ask user what they want to do, even for a single
@@ -847,19 +768,11 @@
     editor: null
   };
 
-  /**
-   * Classes used by altEditor that are configurable
-   *
-   * @namespace
-   */
   altEditor.classes = {
     /** @type {String} Class used by the selection button */
     btn: 'btn'
   };
 
-  // Attach a listener to the document which listens for DataTables
-  // initialisation
-  // events so we can automatically initialise
   $(document).on('preInit.dt.altEditor', function (e, settings, json) {
     if (e.namespace !== 'dt') {
       return;
@@ -880,4 +793,6 @@
   // Alias for access
   DataTable.altEditor = altEditor;
   return altEditor;
+
 });
+

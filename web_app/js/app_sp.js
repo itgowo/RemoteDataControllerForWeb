@@ -64,21 +64,12 @@ function inflateDataFromSp(result) {
       dom: "Bfrtip",
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 2) {
-          return;
-        }
         sp_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       },
       onDeleteRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 2) {
-          return;
-        }
         sp_delete(convertDataForActionData(columnHeader, rowdata), success, error);
       },
       onEditRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 2) {
-          return;
-        }
         sp_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })

@@ -62,21 +62,12 @@ function inflateDataFromDb(result) {
       dom: "Bfrtip",
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       },
       onDeleteRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_delete(convertDataForActionData(columnHeader, rowdata), success, error);
       },
       onEditRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })
@@ -122,21 +113,12 @@ function inflateDataFromDb2(result) {
       searching: false,
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       },
       onDeleteRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_delete(convertDataForActionData(columnHeader, rowdata), success, error);
       },
       onEditRow: function (datatable, rowdata, success, error) {
-        if (pageindex != 1) {
-          return
-        }
         db_update(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
       }
     })
@@ -281,7 +263,6 @@ function db_getDbDataForServerSide(columnHeader,data, callback, settings) {
     dataType: "json",
     contentType: 'application/json; charset=utf-8',
     success: function (result) {
-      console.log(callback)
       callback(convertDataForGetData(result));
     }
   });
