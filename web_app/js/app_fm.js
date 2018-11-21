@@ -221,26 +221,28 @@ function uploadFile() {
 }
 
 function file_delete(position, path) {
-  $.ajax({
-    type: "POST",
-    url: rootUrlWithUrlParam,
-    crossDomain: true,
-    data: JSON.stringify({
-      action: "deleteFile",
-      "data": path
-    }),
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success:
-      function (result) {
-        if (result.code == 200) {
-          table.rows('.selected')
-            .remove()
-            .draw();
-          showSuccessInfo(result.msg);
-        } else {
-          showErrorInfo(result.msg);
+  if (confirm("是否删除" + path + "?") == true) {
+    $.ajax({
+      type: "POST",
+      url: rootUrlWithUrlParam,
+      crossDomain: true,
+      data: JSON.stringify({
+        action: "deleteFile",
+        "data": path
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success:
+        function (result) {
+          if (result.code == 200) {
+            table.rows('.selected')
+              .remove()
+              .draw();
+            showSuccessInfo(result.msg);
+          } else {
+            showErrorInfo(result.msg);
+          }
         }
-      }
-  });
+    });
+  }
 }

@@ -1,22 +1,12 @@
 /**
- * @summary altEditor
- * @description Lightweight editor for DataTables
- * @version 2.0
- * @file dataTables.editor.free.js
- * @author kingkode (www.kingkode.com)
- *  Modified by: Kasper Olesen (https://github.com/KasperOlesen), Luca Vercelli (https://github.com/luca-vercelli), Zack Hable (www.cobaltdevteam.com)
- * @contact www.kingkode.com/contact
- * @contact zack@cobaltdevteam.com
- * @copyright Copyright 2016 Kingkode
- *
- * This source file is free software, available under the following license: MIT
- * license
- *
- * This source file is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE. See the license files for details.
- *
- *
+ * @version 2.0.0
+ * @author lujianchao(itgowo.com)
+ * @Github： https://github.com/itgowo
+ * 原作者 https://github.com/KasperOlesen/DataTable-AltEditor
+ * 此版本修复了多个DataTables使用时因为创建的事件ID相同而导致多处触发问题；
+ * 例如DataTablesA设置了onEditRow事件，对DataTablesB进行操作触发B的onEditRow时，A的onEditRow也会执行，这是一个严重bug，希望大家用多个DataTables的用这个库。
+ * 同时添加编辑删除改成了中文，namespace改了，固定id变成了动态id，其他的与原作者一致。
+ * 删除了部分注释，感觉多余。没删的是不想删了，消耗卡路里
  */
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
