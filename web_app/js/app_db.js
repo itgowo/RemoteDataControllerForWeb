@@ -59,7 +59,8 @@ function inflateDataFromDb(result) {
       select: 'single',
       searching: false,
       altEditor: true,     // Enable altEditor
-      dom: "Bfrtip",
+      dom: "BSlrtip",
+      lengthMenu:[[10,20,50,100,-1],[10,20,50,100,"全部"]],
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
         db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));

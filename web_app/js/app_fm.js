@@ -6,11 +6,18 @@ var dirType;
 var File_rootPath;
 
 function downloadFile(path) {
-  if (rootUrlWithUrlParam.indexOf("?") != -1) {
-    window.location = rootUrlWithUrlParam + "&downloadFile=" + path;
-  } else {
-    window.location = rootUrlWithUrlParam + "?downloadFile=" + path;
+  var urlPath = rootUrlWithUrlParam.substring(0, rootUrlWithUrlParam.indexOf("?"));
+  var urlParameter = rootUrlWithUrlParam.substring(rootUrlWithUrlParam.indexOf("?") + 1, rootUrlWithUrlParam.length);
+  console.log(urlPath, urlParameter)
+  urlPath = urlPath + "/" + path;
+  console.log(urlPath.indexOf("//"))
+  if (urlPath.indexOf("//")==0){
+    urlPath=urlPath.substring(1,urlPath.length);
   }
+  console.log(urlPath);
+  var url = urlPath + "?" + urlParameter + "&downloadFile=" + path
+  console.log(url);
+  window.location = url;
 }
 
 function getFileList(path) {
@@ -55,7 +62,8 @@ function getFileList(path) {
               language: tableLanguage,
               select: 'single',
               altEditor: true,
-              dom: 'Bfrtip',
+              dom: "BSlrtip",
+              lengthMenu:[[10,20,50,100,-1],[10,20,50,100,"全部"]],
               buttons: [
                 {
                   text: '返回',
