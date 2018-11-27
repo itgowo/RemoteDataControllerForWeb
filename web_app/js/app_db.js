@@ -58,9 +58,9 @@ function inflateDataFromDb(result) {
       language: tableLanguage,
       select: 'single',
       searching: false,
-      altEditor: true,     // Enable altEditor
+      altEditor: true,
       dom: "BSlrtip",
-      lengthMenu:[[10,20,50,100,-1],[10,20,50,100,"全部"]],
+      lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "全部"]],
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
         db_addData(convertDataForActionData(columnHeader, rowdata), success, error, JSON.stringify(rowdata));
@@ -105,12 +105,15 @@ function inflateDataFromDb2(result) {
     var data = convertDataForGetData(result, columnHeader);
     $(tableId).dataTable({
       columnDefs: columnHeader,
+      processing: true,
+      serverSide: false,
+      responsive: true,
       data: data.data,
       language: tableLanguage,
       select: 'single',
-      serverSide: false,
       altEditor: true,     // Enable altEditor
-      dom: "Bfrtip",
+      dom: "BSlrtip",
+      lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "全部"]],
       searching: false,
       buttons: availableButtons,
       onAddRow: function (datatable, rowdata, success, error) {
@@ -249,7 +252,7 @@ function db_DoActionAddOrUpdateOrDelete(action, actionData, success, error, rowd
 }
 
 //数据请求分页模式
-function db_getDbDataForServerSide(columnHeader,data, callback, settings) {
+function db_getDbDataForServerSide(columnHeader, data, callback, settings) {
   var param = {};
   param.pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候
   param.pageIndex = (data.start / data.length) + 1;//开始的记录序号
