@@ -71,7 +71,7 @@ function login() {
   if (clientId != "设备ID" & clientToken != "设备验证码") {
     rootUrlWithUrlParam = rootUrl + "/Web?ClientId=" + clientId;
   } else {
-    alert("信息不能为空");
+    alertDialog("提示", "信息不能为空");
     return;
   }
   var json = {
@@ -91,10 +91,10 @@ function login() {
           $('#rdc_layout').show();
           initRDC();
         } else {
-          alert("验证失败:" + result.msg)
+          alertDialog("验证失败", result.msg)
         }
       } else {
-        alert("验证失败:未返回数据");
+        alertDialog("验证失败", "未返回数据");
       }
     }
   });

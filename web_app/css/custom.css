@@ -236,20 +236,20 @@ body a,form li,input[type="submit"],input[type="text"],.sixth-login input[type="
     -moz-transition: 0.1s all;
     -o-transition: 0.1s all;
 }
-/*--close--*/
-.close{
-    background: url('../images/close.png') no-repeat 0px 0px;
-    cursor: pointer;
-    width: 20px;
-    height: 20px;
-    position: absolute;
-    left: 20px;
-    top: 20px;
-    -webkit-transition: color 0.2s ease-in-out;
-    -moz-transition: color 0.2s ease-in-out;
-    -o-transition: color 0.2s ease-in-out;
-    transition: color 0.2s ease-in-out;
-}
+/*!*--close--*!*/
+/*.close{*/
+    /*background: url('../images/close.png') no-repeat 0px 0px;*/
+    /*cursor: pointer;*/
+    /*width: 20px;*/
+    /*height: 20px;*/
+    /*position: absolute;*/
+    /*left: 20px;*/
+    /*top: 20px;*/
+    /*-webkit-transition: color 0.2s ease-in-out;*/
+    /*-moz-transition: color 0.2s ease-in-out;*/
+    /*-o-transition: color 0.2s ease-in-out;*/
+    /*transition: color 0.2s ease-in-out;*/
+/*}*/
 /*--/close--*/
 h1 {
     font-family: 'Exo 2', sans-serif;
@@ -293,7 +293,7 @@ h1 {
     -moz-border-top-right-radius: 10px;
     -o-border-top-right-radius: 10p
 }
-input[type="text"] {
+.login_input_text{
     width: 70%;
     padding: 1em 2em 1em 3em;
     color: #9199aa;
@@ -305,19 +305,8 @@ input[type="text"] {
     border-bottom: 1px solid#484856;
     margin-top: 2em;
 }
-input[type="password"]{
-    width: 70%;
-    padding: 1em 2em 1em 3em;
-    color: #dd3e3e;
-    font-size: 18px;
-    outline: none;
-    background: url(../images/key.png) no-repeat 10px 23px;
-    border: none;
-    font-weight: 100;
-    border-bottom: 1px solid#484856;
-    margin-bottom: 3em;
-}
-input[type="text2"]{
+
+.login_input_text2{
     width: 70%;
     padding: 1em 2em 1em 3em;
     color: #9199aa;
@@ -330,7 +319,7 @@ input[type="text2"]{
     margin-top: 2em;
 }
 
-input[type="submit"]{
+.login_input_submit{
     font-size: 30px;
     color: #fff;
     outline: none;
@@ -348,7 +337,7 @@ input[type="submit"]{
     -o-border-bottom-right-radius: 15px;
     cursor: pointer;
 }
-input[type="submit"]:hover {
+.login_input_submit:hover {
     background: #ff2775;
     border-bottom-left-radius: 15px;
     -webkit-border-bottom-left-radius: 15px;

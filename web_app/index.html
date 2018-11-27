@@ -7,6 +7,7 @@
 
     <script src="js/datatables.min.js"></script>
     <script src="js/dataTables.altEditor.free.js"></script>
+    <script src="js/bootbox.min.js"></script>
     <link href="css/custom.css" rel="stylesheet">
     <link href="css/datatables.min.css" rel="stylesheet">
 
@@ -119,17 +120,17 @@
     <h1>欢迎使用远程数据控制服务</h1>
     <div class="login-form">
         <form>
-            <input id="ClientId" type="text" class="text" value="设备ID"
+            <input id="ClientId" type="text" class="login_input_text" value="设备ID"
                    onfocus="if (this.value == '设备ID'){this.value = ''}"
                    onblur="if (this.value == '') {this.value = '设备ID';}">
             <div class="key">
-                <input id="ClientToken" type="text2" value="设备验证码"
+                <input id="ClientToken" type="text" class="login_input_text2" value="设备验证码"
                        onfocus="if (this.value == '设备验证码'){this.value = ''}"
                        onblur="if (this.value == '') {this.value = '设备验证码';}" on>
             </div>
         </form>
         <div class="signin">
-            <input type="submit" value="登录" onclick="login()">
+            <input type="submit" value="登录" class="login_input_submit" onclick="login()">
         </div>
     </div>
 </div>

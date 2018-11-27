@@ -46,7 +46,11 @@ function getFileList(path) {
             } else {
               FilecolumnData[i].fileName = "<div  onClick='downloadFile(\"" + FilecolumnData[i].path + "\")'> <img src=\"../images/file.png\"/><a>" + FilecolumnData[i].fileName + "</a></div>";
             }
-            FilecolumnData[i].action = "<div><button class='btn btn-default' onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button><button class='btn btn-default' style='margin-left: 10px' onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button></div>";
+            FilecolumnData[i].action = "<div>" +
+              "<button class='btn btn-default' style='margin-left: 10px' onClick='file_delete(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>删除</button>" +
+              "<button class='btn btn-default' style='margin-left: 10px' onClick='file_rename(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>重命名</button>" +
+              "<button class='btn btn-default' style='margin-left: 10px' onClick='file_copyPath(\"" + i + "\",\"" + FilecolumnData[i].path + "\")'>复制路径</button>"
+              + "</div>";
           }
           if ($.fn.DataTable.isDataTable(tableId)) {
             $(tableId).DataTable().destroy();
@@ -118,72 +122,105 @@ function getFileList(path) {
 }
 
 function file_rename(position, path) {
-  var str = prompt("新的文件名，不要添加路径哦！");
-  if (str == null) {
-    return;
-  }
-  if (str) {
-    $.ajax({
-      type: "POST",
-      url: rootUrlWithUrlParam,
-      crossDomain: true,
-      data: JSON.stringify({
-        action: "renameFile",
-        "data": path,
-        "data1": str
-      }),
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success:
-        function (result) {
-          if (result.code == 200) {
-            getFileList(File_Path);
-            showSuccessInfo(result.msg);
-          } else {
-            showErrorInfo(result.msg);
-          }
+  bootbox.prompt({
+      title: "新的文件名，不包含路径！",
+      buttons: {
+        confirm: {
+          label: '更改',
+          className: 'btn-warning'
+        },
+        cancel: {
+          label: '取消',
+          className: 'btn-default'
         }
-    });
-  } else {
-    alert("新名字错误")
-  }
+      },
+      callback: function (str) {
+        if (str == null) {
+          return;
+        }
+        if (str) {
+          $.ajax({
+            type: "POST",
+            url: rootUrlWithUrlParam,
+            crossDomain: true,
+            data: JSON.stringify({
+              action: "renameFile",
+              "data": path,
+              "data1": str
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success:
+              function (result) {
+                if (result.code == 200) {
+                  getFileList(File_Path);
+                  showSuccessInfo(result.msg);
+                } else {
+                  showErrorInfo(result.msg);
+                }
+              }
+          });
+        } else {
+          alertDialog("提示", "新名字错误")
+        }
+      }
+    }
+  );
+}
+
+function file_copyPath(position, path) {
+  alertDialog("请手动复制", path)
 }
 
 function makeDir() {
-  var str = prompt("文件夹名");
-  if (str == null) {
-    return;
-  }
-  if (str) {
-    $.ajax({
-      type: "POST",
-      url: rootUrlWithUrlParam,
-      crossDomain: true,
-      data: JSON.stringify({
-        action: "makeDir",
-        "data": File_Path + "/" + str
-      }),
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success:
-        function (result) {
-          if (result.code == 200) {
-            getFileList(File_Path);
-            showSuccessInfo(result.msg);
-          } else {
-            showErrorInfo(result.msg);
-          }
-        }
-    });
-  } else {
-    alert("名称非法")
-  }
+  bootbox.prompt({
+    title: "输入新文件夹名称",
+    buttons: {
+      confirm: {
+        label: '创建',
+        className: 'btn-success'
+      },
+      cancel: {
+        label: '取消',
+        className: 'btn-default'
+      }
+    },
+    callback: function (str) {
+      if (str == null) {
+        return;
+      }
+      if (str) {
+        $.ajax({
+          type: "POST",
+          url: rootUrlWithUrlParam,
+          crossDomain: true,
+          data: JSON.stringify({
+            action: "makeDir",
+            "data": File_Path + "/" + str
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success:
+            function (result) {
+              if (result.code == 200) {
+                getFileList(File_Path);
+                showSuccessInfo(result.msg);
+              } else {
+                showErrorInfo(result.msg);
+              }
+            }
+        });
+      } else {
+        alertDialog("提示", "名称非法")
+      }
+    }
+  })
 }
 
 function uploadFile() {
   var files = document.getElementById("uploadFileBtn").files;
   if (typeof (files) == "undefined" || files.length <= 0) {
-    alert("请选择图片");
+    alertDialog("提示", "请选择图片");
     return;
   }
   // var formFile = new FormData(document.getElementById("uploadFileBtn"));
@@ -212,41 +249,70 @@ function uploadFile() {
     contentType: false, //必须
     success: function (result) {
       if (result.code == 200) {
-        alert("上传完成!");
+        alertDialog("提示", "上传完成!");
       } else {
-        alert(result.msg);
+        alertDialog("提示", result.msg);
       }
       getFileList(File_Path);
     },
     error: function (xhr, state, errorThrown) {
-      alert("上传失败!" + errorThrown);
+      alertDialog("上传失败!", errorThrown);
     }
   })
 }
 
 function file_delete(position, path) {
-  if (confirm("是否删除" + path + "?") == true) {
-    $.ajax({
-      type: "POST",
-      url: rootUrlWithUrlParam,
-      crossDomain: true,
-      data: JSON.stringify({
-        action: "deleteFile",
-        "data": path
-      }),
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success:
-        function (result) {
-          if (result.code == 200) {
-            table.rows('.selected')
-              .remove()
-              .draw();
-            showSuccessInfo(result.msg);
-          } else {
-            showErrorInfo(result.msg);
-          }
-        }
-    });
-  }
+  bootbox.confirm({
+    title: "提示",
+    message: "是否删除" + path + "?",
+    buttons: {
+      confirm: {
+        label: '删除',
+        className: 'btn-danger'
+      },
+      cancel: {
+        label: '否',
+        className: 'btn-default'
+      }
+    },
+    callback: function (result) {
+      if (result) {
+        $.ajax({
+          type: "POST",
+          url: rootUrlWithUrlParam,
+          crossDomain: true,
+          data: JSON.stringify({
+            action: "deleteFile",
+            "data": path
+          }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success:
+            function (result) {
+              if (result.code == 200) {
+                table.rows('.selected')
+                  .remove()
+                  .draw();
+                showSuccessInfo(result.msg);
+              } else {
+                showErrorInfo(result.msg);
+              }
+            }
+        });
+      }
+    }
+  });
+}
+
+function alertDialog(title, message) {
+  bootbox.alert({
+    title: title,
+    message: message,
+    buttons: {
+      ok: {
+        label: '关闭',
+        className: 'btn-default'
+      }
+    }
+  });
 }
