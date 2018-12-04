@@ -62,7 +62,7 @@ function getFileList(path) {
               language: tableLanguage,
               select: 'single',
               altEditor: true,
-              dom: "BSlrtip",
+              dom: "BSflrtip",
               lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "全部"]],
               buttons: [
                 {
